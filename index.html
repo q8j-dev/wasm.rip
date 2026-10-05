@@ -6,10 +6,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>wasm.rip</title>
-    <meta name="description" content="a group of people on the internet porting games, emulators and tools to run in your browser." />
+    <meta name="description" content="a group of people on the internet who port games and emulators to run in a browser." />
     <meta name="theme-color" content="#08080a" />
     <meta property="og:title" content="wasm.rip" />
-    <meta property="og:description" content="games, emulators and tools, ported to the browser." />
+    <meta property="og:description" content="games and emulators ported to run in your browser." />
     <meta property="og:image" content="https://wasm.rip/img/logo.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png" />
     <link rel="apple-touch-icon" href="img/icon-180.png" />
@@ -17,13 +17,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
-      <!-- the flare from the logo, reused as the "featured" mark -->
-      <symbol id="flare" viewBox="0 0 24 24">
-        <path d="M12 0c.6 6.6 2.4 10.4 12 12-9.6 1.6-11.4 5.4-12 12-.6-6.6-2.4-10.4-12-12 9.6-1.6 11.4-5.4 12-12z" />
-      </symbol>
-    </svg>
-
     <header class="bar">
       <div class="wrap bar-inner">
         <a class="wordmark" href="#top" aria-label="wasm.rip home">WASM.RIP</a>
@@ -44,15 +37,16 @@
             <div class="hero-text">
               <p class="hero-claim">we port games to the web.</p>
               <p class="lede">
-                unity, xna, emulators, whatever we can get compiled to webassembly.
-                no installs, no accounts. you click it, it runs in the tab.
+                unity and xna games and emulators, compiled to webassembly.
+                open a port and it runs in your browser tab. there's nothing
+                to install and no account to make.
               </p>
             </div>
             <div class="hero-side">
               <dl class="stats">
-                <div><dt>ports</dt><dd id="stat-ports">–</dd></div>
-                <div><dt>people</dt><dd id="stat-people">–</dd></div>
-                <div><dt>latest</dt><dd id="stat-latest">–</dd></div>
+                <div><dt>ports</dt><dd id="stat-ports"></dd></div>
+                <div><dt>people</dt><dd id="stat-people"></dd></div>
+                <div><dt>latest</dt><dd id="stat-latest"></dd></div>
               </dl>
               <div class="hero-actions">
                 <a class="btn btn-solid" href="#ports">browse ports</a>
@@ -77,16 +71,14 @@
           </label>
           <div class="tabs" role="group" aria-label="filter">
             <button type="button" class="tab" data-filter="all" aria-pressed="true">all</button>
-            <button type="button" class="tab" data-filter="featured" aria-pressed="false">
-              <svg class="flare" aria-hidden="true"><use href="#flare" /></svg>featured
-            </button>
+            <button type="button" class="tab" data-filter="featured" aria-pressed="false">featured</button>
           </div>
           <label class="sort">
             <span>sort</span>
             <select id="sort">
               <option value="featured">featured first</option>
               <option value="new">newest</option>
-              <option value="az">a–z</option>
+              <option value="az">name</option>
             </select>
           </label>
         </div>
@@ -115,20 +107,20 @@
         <div class="about">
           <p class="about-main">
             a group of people on the internet, porting games, emulators, or tools.
-            everything here runs client-side, in your browser, off static files.
+            the ports run in your browser, so nothing gets installed on your computer.
           </p>
           <dl class="faq">
             <div>
               <dt>a port is broken</dt>
-              <dd>tell us in the <a href="https://discord.gg/uubyGYPHQw" target="_blank" rel="noopener">discord</a>. say which browser you're on, it matters more than you'd think.</dd>
+              <dd>tell us in the <a href="https://discord.gg/uubyGYPHQw" target="_blank" rel="noopener">discord</a>, and say which browser and device you're on.</dd>
             </div>
             <div>
               <dt>it's slow</dt>
-              <dd>big ports download a lot on first load. chromium-based browsers usually do best.</dd>
+              <dd>the bigger ports download a lot of data the first time you open one. if a port stutters, try it in chrome or edge.</dd>
             </div>
             <div>
               <dt>i made a port</dt>
-              <dd>come say hi. if you're already in, add it to <code>games.json</code> on <a href="https://github.com/wasmdotrip" target="_blank" rel="noopener">github</a>.</dd>
+              <dd>come say hi in the discord. if you're in the group, add it to <code>games.json</code> on <a href="https://github.com/wasmdotrip" target="_blank" rel="noopener">github</a>.</dd>
             </div>
           </dl>
         </div>

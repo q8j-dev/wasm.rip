@@ -61,6 +61,19 @@ def aperture_left(x_top, y_top, x_bot, y_bot, y_mid_hi, y_mid_lo, st=ST, sb=SB):
     return mirror_x(aperture_right(-x_top, y_top, -x_bot, y_bot, y_mid_hi, y_mid_lo, st, sb), 0)
 
 
+def flare(x_s, y, ty, sx, sy, n=24):
+    """The logo S's terminal flare, scaled to a bar of weight ty: the bar's
+    inner edge eases away from flat towards the terminal cut.
+    sx: +1 grows to the right, -1 to the left; sy: -1 dips down, +1 rises."""
+    L = P["S_tL"] * ty / P["S_ht"]
+    depth = P["S_td"] * ty / P["S_ht"]
+    span = 2.6
+    pts = [(x_s + sx * L * span * i / n, y + sy * depth * (span * i / n) ** 1.7) for i in range(n + 1)]
+    far = x_s + sx * L * span
+    pts += [(far, y - sy), (x_s, y - sy)]
+    return polygon(pts), L
+
+
 def open_round(x0, y0, x1, y1, tx, ty, r_out, r_in, side="right", top_term=True, bot_term=True,
                keep_from=None, st=ST, sb=SB, inset=10):
     """A round opened on one side, built like the logo's S: the counter is
@@ -77,12 +90,22 @@ def open_round(x0, y0, x1, y1, tx, ty, r_out, r_in, side="right", top_term=True,
     shape = diff(shape, rect(x1 - tx - 1, lo, BIG, y1 - ty))
     if top_term:
         xt = x1 - inset
-        shape = diff(shape, polygon([(xt, y1 + 5), (BIG, y1 + 5), (BIG, y1 - ty - 5), (xt - (ty + 10) * st, y1 - ty - 5)]))
+        xc = xt - (ty + 5) * st                   # cut line at the bar's inner edge
+        fl, L = flare(xc - L_of(ty), y1 - ty, ty, +1, -1)
+        fl_low = y0 + ty + 1 if keep_from is None else max(y0 + ty + 1, keep_from + 1)
+        shape = union(shape, inter(fl, rect(x0 + tx, fl_low, BIG, y1)))
+        cut_top = polygon([(xt, y1 + 5), (BIG, y1 + 5), (BIG, y0 - 5), (xt - (y1 - y0 + 10) * st, y0 - 5)])
+        low = y0 + ty + 1 if keep_from is None else max(y0 + ty + 1, keep_from)
+        shape = diff(shape, inter(cut_top, rect(-BIG, low, BIG, BIG)))
     else:
         shape = diff(shape, rect(x1 - tx - 1, y1 - ty - 1, BIG, BIG))
     if bot_term and keep_from is None:
         xb = x1 - inset
-        shape = diff(shape, polygon([(xb, y0 - 5), (BIG, y0 - 5), (BIG, y0 + ty + 5), (xb - (ty + 10) * sb, y0 + ty + 5)]))
+        xc = xb - (ty + 5) * sb
+        fl, L = flare(xc - L_of(ty), y0 + ty, ty, +1, +1)
+        shape = union(shape, inter(fl, rect(x0 + tx, -BIG, BIG, y1 - ty - 1)))
+        cut_bot = polygon([(xb, y0 - 5), (BIG, y0 - 5), (BIG, y1 + 5), (xb - (y1 - y0 + 10) * sb, y1 + 5)])
+        shape = diff(shape, inter(cut_bot, rect(-BIG, -BIG, BIG, y1 - ty - 1)))
     elif keep_from is None:
         shape = diff(shape, rect(x1 - tx - 1, -BIG, BIG, y0 + ty + 1))
     return shape
@@ -97,8 +120,16 @@ def hook_left(x0, x1, yb, yt, tx, ty, r_out, r_in, sb=SB, inset=10, stem=None):
     shape = diff(o, i)
     shape = diff(shape, rect(-BIG, yb + ty, x0 + tx + 1, BIG))
     xb = x0 - inset + 22
-    shape = diff(shape, polygon([(xb, yb - 5), (-BIG, yb - 5), (-BIG, yb + ty + 5), (xb + (ty + 10) * sb, yb + ty + 5)]))
+    xc = xb + (ty + 5) * sb
+    fl, L = flare(xc + L_of(ty), yb + ty, ty, -1, +1)
+    shape = union(shape, inter(fl, rect(-BIG, yb + 1, x1 - sw - 1, yt)))
+    cut = polygon([(xb, yb - 5), (-BIG, yb - 5), (-BIG, BIG), (xb + (BIG - yb) * sb, BIG)])
+    shape = diff(shape, cut)
     return shape
+
+def L_of(ty):
+    return P["S_tL"] * ty / P["S_ht"]
+
 
 def cstroke(c0, c1, w):
     """Stroke between two centre points, horizontal width w, flat ends."""
@@ -319,17 +350,16 @@ def lc_e():
     return e
 
 def lc_f():
-    w = 400
+    """Stem rising into a hook built like the top of C (same open-round
+    helper, same flared terminal), plus a crossbar on the x-height."""
     x0 = 50
-    top = ASC
-    arc = ring(x0, top - 2 * ro, x0 + 2 * ro + 40, top + os_ * 0.5, v, h, ro, ri)
-    arc = inter(arc, rect(x0 - 5, top - ro, BIG, top + 50))
-    cut = polygon([(x0 + ro + 150, top + 60), (BIG, top + 60), (BIG, top - ro - 5), (x0 + ro + 150 - (ro + 65) * ST, top - ro - 5)])
-    arc = diff(arc, cut)
-    stem = rect(x0, 0, x0 + v, top - ro + 5)
-    bar = rect(0, X - h, w - 20, X)
-    return union(arc, stem, bar)
-
+    wh = 360
+    top = ASC + os_ * 0.5
+    hook = open_round(x0, X - 220, x0 + wh, top, v, h, ro, ri, keep_from=-BIG, bot_term=False)
+    hook = inter(hook, rect(-BIG, X - 10, BIG, BIG))
+    stem = rect(x0, 0, x0 + v, X)
+    bar = rect(0, X - h, 380, X)
+    return union(hook, stem, bar)
 
 def lc_g():
     w = 605
@@ -416,6 +446,11 @@ def lc_s():
     q["S_hm"] = P["S_hm"] * 0.86
     q["S_rou"] = P["S_rou"] * 0.70
     q["S_rol"] = P["S_rol"] * 0.70
+    q["S_tL"] = P["S_tL"] * 0.80
+    q["S_bL"] = P["S_bL"] * 0.80
+    q["S_td"] = P["S_td"] * 0.85
+    q["S_bd"] = P["S_bd"] * 0.85
+    q["S_rt"] = P["S_rt"] * 0.70
     q["S_riu"] = P["S_riu"] * 0.75
     q["S_ril"] = P["S_ril"] * 0.75
     return shift(glyphs._S(q, X + 2 * os_, K), 0, -os_)

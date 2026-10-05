@@ -13,9 +13,6 @@ const peopleList = document.querySelector("#people-list");
 
 const state = { q: "", filter: "all", sort: "featured", porter: null };
 
-// how many of the newest ports get a "new" badge
-const NEW_COUNT = 3;
-
 const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 // "crackers & slqnt" -> ["crackers", "slqnt"]
@@ -28,7 +25,6 @@ const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 
 
 let games = [];
 let members = [];
-let newGames = new Set();
 
 function matchesPorter(game, member) {
   const keys = [member.name, member.github, ...(member.aliases || [])].map(norm);
@@ -70,28 +66,6 @@ function card(game) {
   img.addEventListener("error", () => img.remove(), { once: true });
   thumb.appendChild(img);
 
-  const badges = document.createElement("div");
-  badges.className = "badges";
-  if (game.featured) {
-    const b = document.createElement("span");
-    b.className = "badge badge-star";
-    b.title = "featured";
-    b.innerHTML = '<svg class="flare" aria-hidden="true"><use href="#flare"/></svg><span class="visually-hidden">featured</span>';
-    badges.appendChild(b);
-  }
-  if (newGames.has(game)) {
-    const b = document.createElement("span");
-    b.className = "badge";
-    b.textContent = "new";
-    badges.appendChild(b);
-  }
-  if (isExternal(game.gameUrl)) {
-    const b = document.createElement("span");
-    b.className = "badge badge-ext";
-    b.textContent = "external";
-    badges.appendChild(b);
-  }
-
   const meta = document.createElement("div");
   meta.className = "meta";
   const title = document.createElement("span");
@@ -101,8 +75,14 @@ function card(game) {
   by.className = "by";
   by.textContent = `port by ${game.porter}`;
   meta.append(title, by);
+  if (isExternal(game.gameUrl)) {
+    const where = document.createElement("span");
+    where.className = "by";
+    where.textContent = `hosted on ${new URL(game.gameUrl).hostname}`;
+    meta.appendChild(where);
+  }
 
-  a.append(thumb, badges, meta);
+  a.append(thumb, meta);
   return a;
 }
 
@@ -118,7 +98,7 @@ function render() {
     empty.innerHTML = "";
     empty.append(
       state.q ? `nothing matches "${state.q}". ` : "nothing here. ",
-      "want it ported? ask in the "
+      "if you want it ported, ask in the "
     );
     const link = document.createElement("a");
     link.href = "https://discord.gg/uubyGYPHQw";
@@ -248,12 +228,11 @@ Promise.all([
     // file order is the order things were added, ids have dupes so don't trust them
     games = g.map((game, i) => ({ ...game, _order: i }));
     members = m;
-    newGames = new Set([...games].sort((a, b) => b._order - a._order).slice(0, NEW_COUNT));
 
     const latest = games[games.length - 1];
     document.querySelector("#stat-ports").textContent = games.length;
-    document.querySelector("#stat-people").textContent = members.length || "–";
-    document.querySelector("#stat-latest").textContent = latest ? latest.name : "–";
+    document.querySelector("#stat-people").textContent = members.length || "";
+    document.querySelector("#stat-latest").textContent = latest ? latest.name : "";
     document.querySelector("#stat-latest").title = latest ? latest.name : "";
 
     render();

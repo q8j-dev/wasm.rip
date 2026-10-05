@@ -67,7 +67,7 @@ KEYS = {
     "M": ["M_w", "M_d", "M_x0", "M_f", "M_vb"],
     "W": ["W_w", "W_d1", "W_d2", "W_bl", "W_f1", "W_mt"],
     "S": ["S_xu0", "S_xu1", "S_xl0", "S_xl1", "S_vs", "S_ht", "S_hm", "S_hb", "S_ym",
-          "S_rou", "S_riu", "S_rol", "S_ril", "S_xt", "S_st", "S_xb", "S_sb", "S_os"],
+          "S_rou", "S_riu", "S_rol", "S_ril", "S_xt", "S_st", "S_xb", "S_sb", "S_os", "S_rt", "S_tL", "S_td", "S_bL", "S_bd"],
 }
 
 

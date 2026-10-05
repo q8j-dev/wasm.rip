@@ -23,7 +23,7 @@ P = dict(
     S_ym=370, S_rou=210, S_riu=70, S_rol=220, S_ril=70, S_xt=560, S_st=0.25, S_xb=50, S_sb=0.25,
     # dot
     dot=190, dot_e=1.0, dot_y=-8,
-    S_os=12,
+    S_os=12, S_rt=200, S_tL=120, S_td=30, S_bL=120, S_bd=30,
     slant=0.1705,
 )
 
@@ -105,12 +105,29 @@ def g_S(p=P):
     return shift(_S(p, p["C"] + 2 * os_, k), 0, -os_)
 
 
+def _flare(x_s, y, L, depth, direction, n=24):
+    """Material under (direction=+1, going right and down) or over
+    (direction=-1, going left and up) a bar's inner edge, easing out of the
+    flat edge so there's no kink: depth(u) = depth * u**1.7, u = dist / L."""
+    pts = []
+    span = 2.6
+    for i in range(n + 1):
+        u = span * i / n
+        pts.append((x_s + direction * u * L, y - direction * depth * u ** 1.7))
+    far = x_s + direction * span * L
+    pts += [(far, y + direction * 1), (x_s, y + direction * 1)]
+    return polygon(pts)
+
+
 def _S(p, C, k):
     vs, ht, hm, hb, ym = p["S_vs"], p["S_ht"], p["S_hm"], p["S_hb"], p["S_ym"]
     xu0, xu1, xl0, xl1 = p["S_xu0"], p["S_xu1"], p["S_xl0"], p["S_xl1"]
-    up = diff(rrect(xu0, ym - hm / 2, xu1, C, p["S_rou"], k),
+    # the terminal corners (upper top-right, lower bottom-left) get their own
+    # small radius: in the logo the bars run straight out to the angled cut
+    rt = p["S_rt"]
+    up = diff(rrect(xu0, ym - hm / 2, xu1, C, (p["S_rou"], rt, p["S_rou"], p["S_rou"]), k),
               rrect(xu0 + vs, ym + hm / 2, xu1 - vs, C - ht, (p["S_riu"], 0, 0, p["S_riu"]), k))
-    lo = diff(rrect(xl0, 0, xl1, ym + hm / 2, p["S_rol"], k),
+    lo = diff(rrect(xl0, 0, xl1, ym + hm / 2, (p["S_rol"], p["S_rol"], p["S_rol"], rt), k),
               rrect(xl0 + vs, hb, xl1 - vs, ym - hm / 2, (0, p["S_ril"], p["S_ril"], 0), k))
     big = 3000
     yt0 = ym - hm / 2 - 1
@@ -125,15 +142,24 @@ def _S(p, C, k):
     if x_cut_u < x_cut_l + 4:          # flats don't overlap: never leave a gap
         x_cut_u = x_cut_l = (x_cut_u + x_cut_l) / 2
         x_cut_u += 3
-    cut_t = union(polygon([(xt, C + 20), (big, C + 20), (big, yt0), (xt - (C + 20 - yt0) * st, yt0)]),
-                  rect(xu1 - vs, ym + hm / 2, big, C - ht),
-                  rect(x_cut_u, yt0, big, C - ht))
+    line_t = polygon([(xt, C + 20), (big, C + 20), (big, yt0), (xt - (C + 20 - yt0) * st, yt0)])
+    up = diff(up, rect(xu1 - vs - 1, ym + hm / 2, big, C - ht), rect(x_cut_u, yt0, big, ym + hm / 2 + 1))
+    # the terminal flares: the bar's underside slopes down into the angled cut
+    xl_t = xt - (C + 20 - (C - ht)) * st          # where the cut crosses the bar's inner edge
+    L, td = p["S_tL"], p["S_td"]
+    x_s = xl_t - L
+    up = union(up, inter(_flare(x_s, C - ht, L, td, +1), rect(-big, yt0 + 1, big, big)))
+    up = diff(up, line_t)
     yb1 = ym + hm / 2 + 1
     xb, sb = p["S_xb"], p["S_sb"]
-    cut_b = union(polygon([(xb, -20), (-big, -20), (-big, yb1), (xb + (yb1 + 20) * sb, yb1)]),
-                  rect(-big, hb, xl0 + vs, ym - hm / 2),
-                  rect(-big, hb, x_cut_l, yb1))
-    return union(diff(up, cut_t), diff(lo, cut_b))
+    line_b = polygon([(xb, -20), (-big, -20), (-big, yb1), (xb + (yb1 + 20) * sb, yb1)])
+    lo = diff(lo, rect(-big, hb, xl0 + vs + 1, ym - hm / 2), rect(-big, ym - hm / 2 - 1, x_cut_l, yb1))
+    xl_b = xb + (hb + 20) * sb
+    L, bd = p["S_bL"], p["S_bd"]
+    x_s = xl_b + L
+    lo = union(lo, inter(_flare(x_s, hb, L, bd, -1), rect(-big, -big, big, yb1 - 1)))
+    lo = diff(lo, line_b)
+    return union(up, lo)
 
 
 LOGO = {"W": g_W, "A": g_A, "S": g_S, "M": g_M, "period": g_period, "R": g_R, "I": g_I, "P": g_P}

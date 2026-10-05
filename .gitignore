@@ -4,3 +4,6 @@ node_modules/
 #ide
 .idea/
 .vscode/
+# font build leftovers
+__pycache__/
+font-src/kern-pairs.json

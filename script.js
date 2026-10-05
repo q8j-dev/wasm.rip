@@ -74,10 +74,9 @@ function card(game) {
   badges.className = "badges";
   if (game.featured) {
     const b = document.createElement("span");
-    b.className = "badge";
+    b.className = "badge badge-star";
     b.title = "featured";
-    b.innerHTML = '<svg class="flare" aria-hidden="true"><use href="#flare"/></svg>';
-    b.append("featured");
+    b.innerHTML = '<svg class="flare" aria-hidden="true"><use href="#flare"/></svg><span class="visually-hidden">featured</span>';
     badges.appendChild(b);
   }
   if (newGames.has(game)) {
@@ -147,7 +146,17 @@ function renderPeople() {
       img.loading = "lazy";
       img.width = 44;
       img.height = 44;
-      img.addEventListener("error", () => (img.style.visibility = "hidden"), { once: true });
+      // dead avatar -> first letter of their name instead of a broken image
+      img.addEventListener(
+        "error",
+        () => {
+          const fallback = document.createElement("span");
+          fallback.className = "person-fallback";
+          fallback.textContent = m.name.charAt(0);
+          img.replaceWith(fallback);
+        },
+        { once: true }
+      );
 
       const text = document.createElement("div");
       text.className = "person-text";

@@ -203,11 +203,7 @@ select {
   filter: drop-shadow(0 4px 30px rgba(0, 0, 0, 0.6));
 }
 
-.hero-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 32px 64px;
-  align-items: end;
+.hero-text {
   margin-top: clamp(40px, 7vw, 96px);
 }
 
@@ -225,53 +221,11 @@ select {
   margin-top: 12px;
 }
 
-.stats {
-  display: flex;
-  flex-wrap: wrap;
-  border-top: 1px solid var(--line-2);
-  border-bottom: 1px solid var(--line-2);
-}
-
-.stats div {
-  padding: 12px 24px 12px 0;
-  margin-right: 24px;
-  border-right: 1px solid var(--line-2);
-}
-
-.stats div:last-child {
-  border-right: 0;
-  margin-right: 0;
-  padding-right: 0;
-}
-
-.stats dt {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.stats dd {
-  font-family: var(--brand);
-  font-weight: 900;
-  font-size: 24px;
-}
-
-#stat-latest {
-  font-size: 17px;
-  line-height: 33px;
-  max-width: 22ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 28px;
 }
 
 .btn {
@@ -720,10 +674,6 @@ code {
 /* ---------- small screens ---------- */
 
 @media (max-width: 820px) {
-  .hero-row {
-    grid-template-columns: 1fr;
-  }
-
   .about {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -763,11 +713,6 @@ code {
 
   .port .title {
     font-size: 15px;
-  }
-
-  .stats div {
-    padding-right: 16px;
-    margin-right: 16px;
   }
 
   .block-head {

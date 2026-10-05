@@ -229,12 +229,6 @@ Promise.all([
     games = g.map((game, i) => ({ ...game, _order: i }));
     members = m;
 
-    const latest = games[games.length - 1];
-    document.querySelector("#stat-ports").textContent = games.length;
-    document.querySelector("#stat-people").textContent = members.length || "";
-    document.querySelector("#stat-latest").textContent = latest ? latest.name : "";
-    document.querySelector("#stat-latest").title = latest ? latest.name : "";
-
     render();
     renderPeople();
   })

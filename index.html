@@ -3,201 +3,149 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>wasm.rip</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <title>wasm.rip</title>
+    <meta name="description" content="a group of people on the internet porting games, emulators and tools to run in your browser." />
+    <meta name="theme-color" content="#08080a" />
+    <meta property="og:title" content="wasm.rip" />
+    <meta property="og:description" content="games, emulators and tools, ported to the browser." />
+    <meta property="og:image" content="https://wasm.rip/img/logo.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png" />
+    <link rel="apple-touch-icon" href="img/icon-180.png" />
+    <link rel="preload" href="fonts/Archivo-italic.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div id="lowkey"></div>
-    <nav>
-      <div class="container">
-        <span>wasm.rip</span>
-        <div class="links">
-          <a href="#members">members</a>
-          <a href="#featured">ports</a>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <!-- the flare from the logo, reused as the "featured" mark -->
+      <symbol id="flare" viewBox="0 0 24 24">
+        <path d="M12 0c.6 6.6 2.4 10.4 12 12-9.6 1.6-11.4 5.4-12 12-.6-6.6-2.4-10.4-12-12 9.6-1.6 11.4-5.4 12-12z" />
+      </symbol>
+    </svg>
+
+    <header class="bar">
+      <div class="wrap bar-inner">
+        <a class="wordmark" href="#top" aria-label="wasm.rip home">WASM.RIP</a>
+        <nav class="bar-links" aria-label="sections">
+          <a href="#ports">ports</a>
+          <a href="#people">people</a>
           <a href="#about">about</a>
-        </div>
+          <a class="bar-out" href="https://discord.gg/uubyGYPHQw" target="_blank" rel="noopener">discord</a>
+        </nav>
       </div>
-    </nav>
+    </header>
 
-    <main>
-      <div class="container">
-        <h1>wasm.rip</h1>
-       <section class="group-section" id="members">
-  <h2>members</h2>
-  <div class="group-grid">
-
-    
-    <a class="group-memb" href="https://github.com/shayderrr" target="_blank">
-      <img src="https://github.com/shayderrr.png" />
-      <span>shayder</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/woahhcrackers" target="_blank">
-      <img src="https://github.com/woahhcrackers.png" />
-      <span>crackers</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/cirsius" target="_blank">
-      <img src="https://github.com/cirsius.png" />
-      <span>cirsius</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/NotRexed" target="_blank">
-      <img src="img/rexed.webp" />
-      <span>NotRexed</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/q8j-dev" target="_blank">
-      <img src="https://github.com/q8j-dev.png" />
-      <span>q8j.</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/SomeRandomFella" target="_blank">
-      <img src="img/plank.webp" />
-      <span>sexyplankton</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/a1pl" target="_blank">
-      <img src="img/sansuke.png" />
-      <span>sunsuke</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/gurtmuncher" target="_blank">
-      <img src="https://github.com/gurtmuncher.png" />
-      <span>gurtmuncher</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/reeyuki" target="_blank">
-      <img src="img/reeyuki.png" />
-      <span>reeyuki</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/slqntdevss" target="_blank">
-      <img src="img/slqntimage.png" />
-      <span>slqnt</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/zx8s" target="_blank">
-      <img src="https://avatars.githubusercontent.com/u/214947125?v=4" />
-      <span>zxs</span>
-    </a>
-
-    <a class="group-memb" href="https://github.com/dashiellbenton" target="_blank">
-      <img src="img/dasherimg.png" />
-      <span>dasher</span>
-    </a>
-    
-    <a class="group-memb" href="https://github.com/mynamescrax" target="_blank">
-      <img src="https://github.com/mynamescrax.png" />
-      <span>crax</span>
-    </a>
-   <a class="group-memb" href="https://github.com/x8rr" target="_blank">
-      <img src="https://avatars.githubusercontent.com/u/266275506?s=400&u=7f2a9b2b9d6fa1d0bd30619ad34a92703f430012&v=4" />
-      <span>TS (plz dont @)</span>
-    </a>
-    <a class="group-memb" href="https://github.com/x8rr" target="_blank">
-      <img src="https://avatars.githubusercontent.com/u/159058655?v=4" />
-      <span>x8r</span>
-    </a>
-  </div>
-</section>
-        <section class="group-section" id="featured">
-          <div class="section-header">
-            <h2>featured ports</h2>
-            <button class="show-all-btn" id="toggle-all-ports">show all ports</button>
+    <main id="top">
+      <section class="hero">
+        <div class="wrap hero-inner">
+          <h1 class="hero-mark wordmark" id="hero-mark">WASM.RIP</h1>
+          <div class="hero-row">
+            <div class="hero-text">
+              <p class="hero-claim">we port games to the web.</p>
+              <p class="lede">
+                unity, xna, emulators, whatever we can get compiled to webassembly.
+                no installs, no accounts. you click it, it runs in the tab.
+              </p>
+            </div>
+            <div class="hero-side">
+              <dl class="stats">
+                <div><dt>ports</dt><dd id="stat-ports">–</dd></div>
+                <div><dt>people</dt><dd id="stat-people">–</dd></div>
+                <div><dt>latest</dt><dd id="stat-latest">–</dd></div>
+              </dl>
+              <div class="hero-actions">
+                <a class="btn btn-solid" href="#ports">browse ports</a>
+                <a class="btn" href="https://github.com/wasmdotrip" target="_blank" rel="noopener">github</a>
+              </div>
+            </div>
           </div>
-          <div class="game-grid featured-grid"></div>
-        </section>
+        </div>
+      </section>
 
-        <section class="group-section" id="about">
-          <h2>about us</h2>
-          <p class="about-text">
-            a group of people on the internet, porting games, emulators, or
-            tools
+      <section class="wrap block" id="ports" aria-labelledby="ports-h">
+        <div class="block-head">
+          <h2 id="ports-h">ports</h2>
+          <p class="count" id="ports-count" aria-live="polite"></p>
+        </div>
+
+        <div class="toolbar">
+          <label class="search">
+            <span class="visually-hidden">search ports</span>
+            <input id="q" type="search" placeholder="search by game or porter" autocomplete="off" spellcheck="false" />
+            <kbd aria-hidden="true">/</kbd>
+          </label>
+          <div class="tabs" role="group" aria-label="filter">
+            <button type="button" class="tab" data-filter="all" aria-pressed="true">all</button>
+            <button type="button" class="tab" data-filter="featured" aria-pressed="false">
+              <svg class="flare" aria-hidden="true"><use href="#flare" /></svg>featured
+            </button>
+          </div>
+          <label class="sort">
+            <span>sort</span>
+            <select id="sort">
+              <option value="featured">featured first</option>
+              <option value="new">newest</option>
+              <option value="az">a–z</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="porter-chip" id="porter-chip" hidden>
+          showing ports by <strong id="porter-name"></strong>
+          <button type="button" id="porter-clear">clear</button>
+        </p>
+
+        <div class="grid" id="grid"></div>
+        <p class="empty" id="empty" hidden></p>
+      </section>
+
+      <section class="wrap block" id="people" aria-labelledby="people-h">
+        <div class="block-head">
+          <h2 id="people-h">people</h2>
+          <p class="count">click a port count to filter</p>
+        </div>
+        <ul class="people" id="people-list"></ul>
+      </section>
+
+      <section class="wrap block" id="about" aria-labelledby="about-h">
+        <div class="block-head">
+          <h2 id="about-h">about</h2>
+        </div>
+        <div class="about">
+          <p class="about-main">
+            a group of people on the internet, porting games, emulators, or tools.
+            everything here runs client-side, in your browser, off static files.
           </p>
-        </section>
-      </div>
+          <dl class="faq">
+            <div>
+              <dt>a port is broken</dt>
+              <dd>tell us in the <a href="https://discord.gg/uubyGYPHQw" target="_blank" rel="noopener">discord</a>. say which browser you're on, it matters more than you'd think.</dd>
+            </div>
+            <div>
+              <dt>it's slow</dt>
+              <dd>big ports download a lot on first load. chromium-based browsers usually do best.</dd>
+            </div>
+            <div>
+              <dt>i made a port</dt>
+              <dd>come say hi. if you're already in, add it to <code>games.json</code> on <a href="https://github.com/wasmdotrip" target="_blank" rel="noopener">github</a>.</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
     </main>
 
-
-
-    <script>
-      const featuredHolder = document.querySelector(".featured-grid");
-      const toggleBtn = document.querySelector("#toggle-all-ports");
-
-      fetch("games.json")
-        .then((res) => res.json())
-        .then((games) => {
-          const byName = (a, b) =>
-            a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-
-          const featured = games.filter((g) => g.featured).sort(byName);
-          const rest = games.filter((g) => !g.featured).sort(byName);
-          const sorted = [...featured, ...rest];
-
-          let showingAll = false;
-
-          // the urge to just use innerhtml instead of ts
-
-          const renderInto = (holder, list) => {
-            holder.innerHTML = "";
-            list.forEach((game) => {
-              const gameThing = document.createElement("div");
-              gameThing.classList.add("game-card");
-
-              const gameImage = document.createElement("img");
-              gameImage.src = game.imageUrl;
-
-              const gameInfo = document.createElement("div");
-              gameInfo.classList.add("game-info");
-
-              const gameTitle = document.createElement("span");
-              gameTitle.classList.add("game-title");
-              gameTitle.textContent = game.name;
-
-              const gamePorter = document.createElement("span");
-              gamePorter.classList.add("game-desc"); // not rlly a desc but wtv(sexyplankton) -- maybe add one later? todolist prob ( shayder )
-              gamePorter.textContent = `port by ${game.porter}`;
-
-              gameInfo.appendChild(gameTitle);
-              gameInfo.appendChild(gamePorter);
-              gameThing.appendChild(gameImage);
-              gameThing.appendChild(gameInfo);
-
-              gameThing.addEventListener("click", () => {
-                window.open(game.gameUrl, "_blank");
-              });
-
-              holder.appendChild(gameThing);
-            });
-          };
-
-          renderInto(featuredHolder, featured);
-
-          toggleBtn.addEventListener("click", () => {
-            showingAll = !showingAll;
-            renderInto(featuredHolder, showingAll ? sorted : featured);
-            toggleBtn.textContent = showingAll ? "show featured" : "show all ports";
-            document.querySelector("#featured h2").textContent = showingAll ? "all ports" : "featured ports";
-          });
-        })
-        .catch(() => {
-          alert("hi, games failed to load, either someone fucked something up or idk");
-        });
-    
-    </script>
-
-    <footer>
-      <div class="container">
-        <a href="https://github.com/wasmdotrip">github</a> |
-        <a href="https://discord.gg/uubyGYPHQw">discord</a>
-        <div class="copyright">
-          © 2026 wasm.rip (hi guys its me crackers i made this site! &
-          sexyplankton) 
+    <footer class="foot">
+      <div class="wrap foot-inner">
+        <span class="wordmark wordmark-sm">WASM.RIP</span>
+        <span class="foot-links">
+          <a href="https://github.com/wasmdotrip" target="_blank" rel="noopener">github</a>
+          <a href="https://discord.gg/uubyGYPHQw" target="_blank" rel="noopener">discord</a>
+        </span>
+        <span class="copyright">© 2026 wasm.rip (hi guys its me crackers i made this site! &amp; sexyplankton)</span>
       </div>
     </footer>
+
+    <script src="script.js"></script>
   </body>
 </html>

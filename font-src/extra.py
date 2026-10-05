@@ -480,3 +480,19 @@ add("ˆ", "circumflex", spacing_mark("circumflex"), fixed=(40, 40))
 add("˜", "tilde", spacing_mark("tilde"), fixed=(40, 40))
 add("ˇ", "caron", spacing_mark("caron"), fixed=(40, 40))
 add("˚", "ring", spacing_mark("ring"), fixed=(50, 50))
+
+
+def arrow_up_right():
+    """↗ for links that leave the site: a diagonal shaft into a corner head,
+    bars at cap-bar weight."""
+    s0, s1 = 90, 610                      # box bottom/top
+    w = s1 - s0
+    t = H * 0.95
+    head_top = rect(w * 0.32, s1 - t, w, s1)
+    head_side = rect(w - V * 0.95, s1 - w * 0.68, w, s1)
+    shaft = cstroke((t * 0.75, s0), (w - t * 0.6, s1 - t * 0.6), t * 1.38)
+    shaft = inter(shaft, rect(-BIG, s0, w, s1))   # tip stays inside the head
+    return union(head_top, head_side, shaft)
+
+
+add("↗", "arrowupright", arrow_up_right, fixed=(40, 40))

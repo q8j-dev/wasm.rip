@@ -71,16 +71,23 @@ function card(game) {
   const title = document.createElement("span");
   title.className = "title";
   title.textContent = game.name;
+  // a game hosted somewhere else gets an arrow; hovering shows where it goes
+  if (isExternal(game.gameUrl)) {
+    const host = new URL(game.gameUrl).hostname;
+    const arrow = document.createElement("span");
+    arrow.className = "ext";
+    arrow.textContent = " \u2197";
+    arrow.setAttribute("aria-label", `, opens ${host}`);
+    title.appendChild(arrow);
+    a.title = `opens ${host}`;
+  }
   const by = document.createElement("span");
   by.className = "by";
-  by.textContent = `port by ${game.porter}`;
+  // a porter field in parentheses is a note, e.g. "(click for more info)"
+  const note = game.porter.match(/^\((.*)\)$/);
+  by.textContent = note ? note[1] : `port by ${game.porter}`;
+  by.title = by.textContent;
   meta.append(title, by);
-  if (isExternal(game.gameUrl)) {
-    const where = document.createElement("span");
-    where.className = "by";
-    where.textContent = `hosted on ${new URL(game.gameUrl).hostname}`;
-    meta.appendChild(where);
-  }
 
   a.append(thumb, meta);
   return a;
@@ -228,6 +235,8 @@ Promise.all([
     // file order is the order things were added, ids have dupes so don't trust them
     games = g.map((game, i) => ({ ...game, _order: i }));
     members = m;
+    // the intro names two games, then "and N more"
+    document.querySelector("#more-count").textContent = Math.max(0, games.length - 2);
 
     render();
     renderPeople();

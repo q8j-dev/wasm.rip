@@ -479,10 +479,14 @@ select {
   transform: scale(1.03);
 }
 
+/* cards in a row share a height, so keep the text block predictable: titles
+   wrap to two lines at most and the porter line sits at the bottom, lining
+   up across the row */
 .port .meta {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
   padding: 12px 14px 14px;
 }
 
@@ -491,12 +495,30 @@ select {
   font-weight: 900;
   font-size: 17px;
   line-height: 1.25;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+.port .ext {
+  color: var(--muted);
+}
+
+.port:hover .ext,
+.port:focus-visible .ext {
+  color: var(--text);
 }
 
 .port .by {
+  margin-top: auto;
   font-family: var(--mono);
   font-size: 12px;
   color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty {

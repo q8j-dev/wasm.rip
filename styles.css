@@ -198,7 +198,7 @@ select {
 
 /* ---------- hero ---------- */
 
-/* the logo's background, rebuilt at 4096px (img/logo-bg-4096.png); this is a
+/* the logo's background, rebuilt from scratch at 4096px (logo/background.png); this is a
    band of it with the flare in the lower third */
 .hero {
   position: relative;

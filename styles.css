@@ -591,6 +591,13 @@ select {
   flex: none;
 }
 
+.chip-sub {
+  font-family: var(--mono);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--dim);
+}
+
 .chip-wordmark svg {
   height: 17px;
   width: auto;

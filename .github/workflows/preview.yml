@@ -1,0 +1,58 @@
+# Fast preview deploys for work branches on forks.
+#
+# The full deploy (static.yml) uploads the whole repo, game files included
+# (~2.8 GB), and takes 4-5 minutes. This one uploads only the site itself
+# (~20 MB) and points game links at the copies already live on wasm.rip, so
+# a small change is up in about a minute. Every push to a claude/* branch
+# triggers it, and a newer push cancels an older preview that's still going.
+#
+# It never runs in wasmdotrip/wasm.rip, so it can't replace the real site.
+name: Preview deploy (site only)
+
+on:
+  push:
+    branches: ["claude/**"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.repository != 'wasmdotrip/wasm.rip'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (site files only, no game files)
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            img
+            fonts
+      - name: Point game links at wasm.rip
+        run: |
+          python3 - <<'EOF'
+          import json
+          games = json.load(open("games.json"))
+          for g in games:
+              if not g["gameUrl"].startswith(("http://", "https://")):
+                  g["gameUrl"] = "https://wasm.rip/" + g["gameUrl"].lstrip("/")
+          json.dump(games, open("games.json", "w"), indent=2)
+          EOF
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

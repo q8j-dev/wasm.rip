@@ -19,7 +19,11 @@ const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 const splitPorters = (porter) =>
   porter.split(/\s*(?:&|,|\band\b)\s*/i).map((p) => p.trim()).filter(Boolean);
 
-const isExternal = (url) => /^https?:\/\//.test(url);
+// links to this site, or to wasm.rip itself (fast previews point games there),
+// aren't "external"
+const HOME_HOSTS = ["wasm.rip", "www.wasm.rip", location.hostname];
+const isExternal = (url) =>
+  /^https?:\/\//.test(url) && !HOME_HOSTS.includes(new URL(url).hostname);
 
 const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 

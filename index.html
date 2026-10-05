@@ -13,7 +13,9 @@
     <meta property="og:image" content="https://wasm.rip/img/logo.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="img/icon-32.png" />
     <link rel="apple-touch-icon" href="img/icon-180.png" />
-    <link rel="preload" href="fonts/WasmRip-BlackItalic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="img/hero-space-m.avif" as="image" type="image/avif" media="(max-width: 480px)" fetchpriority="high" />
+    <link rel="preload" href="img/hero-space-t.avif" as="image" type="image/avif" media="(min-width: 481px) and (max-width: 740px)" fetchpriority="high" />
+    <link rel="preload" href="img/hero-space.avif" as="image" type="image/avif" media="(min-width: 741px)" fetchpriority="high" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -200,6 +202,6 @@
       </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
   </body>
 </html>

@@ -3,8 +3,9 @@
 # The full deploy (static.yml) uploads the whole repo, game files included
 # (~2.8 GB), and takes 4-5 minutes. This one uploads only the site itself
 # (~20 MB) and points game links at the copies already live on wasm.rip, so
-# a small change is up in about a minute. Every push to a claude/* branch
-# triggers it, and a newer push cancels an older preview that's still going.
+# a small change is up in about a minute. Like the full deploy, it runs
+# tools/build.py first. Every push to a claude/* branch triggers it, and a
+# newer push cancels an older preview that's still going.
 #
 # It never runs in wasmdotrip/wasm.rip, so it can't replace the real site.
 name: Preview deploy (site only)
@@ -37,6 +38,7 @@ jobs:
           sparse-checkout: |
             img
             fonts
+            tools
       - name: Point game links at wasm.rip
         run: |
           python3 - <<'EOF'
@@ -47,6 +49,14 @@ jobs:
                   g["gameUrl"] = "https://wasm.rip/" + g["gameUrl"].lstrip("/")
           json.dump(games, open("games.json", "w"), indent=2)
           EOF
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build the fast version of the page
+        run: |
+          pip install --quiet pillow fonttools brotli
+          python3 tools/build.py
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

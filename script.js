@@ -51,6 +51,30 @@ function visibleGames() {
   return list;
 }
 
+// thumbnails and the logo sprite wait for the page's load event, which comes
+// once the hero image and fonts are in. On a slow connection that gives the
+// first screen all the bandwidth; on a fast one it costs nothing.
+const afterLoad = new Promise((resolve) =>
+  document.readyState === "complete" ? resolve() : addEventListener("load", resolve, { once: true })
+);
+afterLoad.then(() => {
+  document.querySelectorAll("use[data-href]").forEach((u) => u.setAttribute("href", u.dataset.href));
+});
+
+// cards are built once and reused, so typing in search doesn't rebuild
+// every card and its image on each keystroke
+const cards = new Map();
+const cardFor = (game) => {
+  if (!cards.has(game)) cards.set(game, card(game));
+  return cards.get(game);
+};
+
+// the deployed page has small AVIF/WebP copies of each image (see
+// tools/build.py); the plain source files just use the original image
+const THUMB_SIZES = "(max-width: 340px) 286px, (max-width: 640px) 45vw, 272px";
+let thumbWidths = [];
+const srcset = (base, ext) => thumbWidths.map((w) => `${base}-${w}.${ext} ${w}w`).join(", ");
+
 function card(game) {
   const a = document.createElement("a");
   a.className = "port";
@@ -61,14 +85,42 @@ function card(game) {
   const thumb = document.createElement("div");
   thumb.className = "thumb";
   const img = document.createElement("img");
-  img.src = game.imageUrl;
   img.alt = "";
   img.loading = "lazy";
   img.decoding = "async";
+  // the hero image goes first; thumbnails can wait a moment
+  img.fetchPriority = "low";
   img.width = 320;
   img.height = 200;
-  img.addEventListener("error", () => img.remove(), { once: true });
-  thumb.appendChild(img);
+  if (game.thumb) {
+    const picture = document.createElement("picture");
+    const avif = document.createElement("source");
+    avif.type = "image/avif";
+    avif.sizes = THUMB_SIZES;
+    img.sizes = THUMB_SIZES;
+    afterLoad.then(() => {
+      avif.srcset = srcset(game.thumb, "avif");
+      img.srcset = srcset(game.thumb, "webp");
+      img.src = `${game.thumb}-${thumbWidths[0]}.webp`;
+    });
+    // a missing thumbnail falls back to the original image
+    img.addEventListener(
+      "error",
+      () => {
+        picture.replaceWith(img);
+        img.removeAttribute("srcset");
+        img.src = game.imageUrl;
+        img.addEventListener("error", () => img.remove(), { once: true });
+      },
+      { once: true }
+    );
+    picture.append(avif, img);
+    thumb.appendChild(picture);
+  } else {
+    afterLoad.then(() => (img.src = game.imageUrl));
+    img.addEventListener("error", () => img.remove(), { once: true });
+    thumb.appendChild(img);
+  }
 
   const meta = document.createElement("div");
   meta.className = "meta";
@@ -99,7 +151,7 @@ function card(game) {
 
 function render() {
   const list = visibleGames();
-  grid.replaceChildren(...list.map(card));
+  grid.replaceChildren(...list.map(cardFor));
 
   countEl.textContent =
     list.length === games.length ? `${games.length} total` : `${list.length} of ${games.length}`;
@@ -231,10 +283,23 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-Promise.all([
-  fetch("games.json").then((r) => r.json()),
-  fetch("members.json").then((r) => r.json()).catch(() => []),
-])
+// the deployed page carries the data inline; the source files fetch it
+const inline = document.querySelector("#site-data");
+// (it still waits one frame, so the first screen paints before the grid is built)
+const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve)));
+const loaded = inline
+  ? nextFrame()
+      .then(() => JSON.parse(inline.textContent))
+      .then((d) => {
+        thumbWidths = d.thumbWidths;
+        return [d.games, d.members];
+      })
+  : Promise.all([
+      fetch("games.json").then((r) => r.json()),
+      fetch("members.json").then((r) => r.json()).catch(() => []),
+    ]);
+
+loaded
   .then(([g, m]) => {
     // file order is the order things were added, ids have dupes so don't trust them
     games = g.map((game, i) => ({ ...game, _order: i }));

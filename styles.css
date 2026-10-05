@@ -1,7 +1,7 @@
 /*  CRACKERS WHY DO YOU USE BLOCK SO MUCH. */
 /*  (it's grid now. everything is grid.) */
 
-/* fonts are self-hosted, latin subset only */
+/* fonts are self-hosted, cut down to latin and to the weights the page uses */
 /* WASM.RIP Black Italic: drawn for this site from the logo lettering */
 @font-face {
   font-family: "WASM.RIP";
@@ -11,23 +11,44 @@
   src: url("fonts/WasmRip-BlackItalic.woff2") format("woff2");
 }
 
+/* Archivo at normal width, 400 to 600 */
 @font-face {
   font-family: "Archivo";
   font-style: normal;
-  font-weight: 400 900;
-  font-stretch: 62% 125%;
+  font-weight: 400 600;
   font-display: swap;
-  src: url("fonts/Archivo-normal.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url("fonts/Archivo.woff2") format("woff2");
+}
+
+/* Arial resized to Archivo's measurements, for the moment before Archivo
+   loads, so the text doesn't reflow when it swaps in */
+@font-face {
+  font-family: "Archivo Fallback";
+  font-weight: 400;
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("LiberationSans");
+  size-adjust: 98%;
+  ascent-override: 89.5%;
+  descent-override: 21.4%;
+  line-gap-override: 0%;
 }
 
 @font-face {
+  font-family: "Archivo Fallback";
+  font-weight: 600;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("LiberationSans-Bold");
+  size-adjust: 94.4%;
+  ascent-override: 93%;
+  descent-override: 22.2%;
+  line-gap-override: 0%;
+}
+
+/* JetBrains Mono regular, no coding ligatures */
+@font-face {
   font-family: "JetBrains Mono";
   font-style: normal;
-  font-weight: 400 500;
+  font-weight: 400;
   font-display: swap;
-  src: url("fonts/JetBrainsMono-normal.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url("fonts/JetBrainsMono.woff2") format("woff2");
 }
 
 :root {
@@ -41,7 +62,7 @@
   --dim: #5c5c66;
   --radius: 10px;
   --wrap: 1240px;
-  --display: "Archivo", "Arial Black", Arial, sans-serif;
+  --display: "Archivo", "Archivo Fallback", Arial, sans-serif;
   --brand: "WASM.RIP", "Archivo", "Arial Black", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
@@ -187,8 +208,41 @@ select {
     linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
     url("img/hero-space.webp") center 58% / cover no-repeat,
     var(--bg);
+  /* AVIF is a third smaller; browsers that can't pick by type keep the line above */
+  background:
+    linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
+    image-set(url("img/hero-space.avif") type("image/avif"), url("img/hero-space.webp") type("image/webp")) center 58% / cover no-repeat,
+    var(--bg);
   border-bottom: 1px solid var(--line);
   margin-bottom: 72px;
+}
+
+/* narrower screens only ever show the middle of the image (it's scaled to
+   the hero's height), so they get a crop of just that part at full detail */
+@media (max-width: 740px) {
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
+      url("img/hero-space-t.webp") center 58% / cover no-repeat,
+      var(--bg);
+    background:
+      linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
+      image-set(url("img/hero-space-t.avif") type("image/avif"), url("img/hero-space-t.webp") type("image/webp")) center 58% / cover no-repeat,
+      var(--bg);
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    background:
+      linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
+      url("img/hero-space-m.webp") center 58% / cover no-repeat,
+      var(--bg);
+    background:
+      linear-gradient(180deg, rgba(8, 8, 10, 0.55) 0%, rgba(8, 8, 10, 0.2) 45%, var(--bg) 100%),
+      image-set(url("img/hero-space-m.avif") type("image/avif"), url("img/hero-space-m.webp") type("image/webp")) center 58% / cover no-repeat,
+      var(--bg);
+  }
 }
 
 .hero-inner {
@@ -463,6 +517,12 @@ select {
   background: #000;
   overflow: hidden;
   border-bottom: 1px solid var(--line);
+}
+
+/* script.js sets the src once the page has loaded; until then, no
+   broken-image icon */
+.port img:not([src]) {
+  visibility: hidden;
 }
 
 .port img {

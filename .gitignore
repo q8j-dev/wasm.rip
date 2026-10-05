@@ -7,3 +7,5 @@ node_modules/
 # font build leftovers
 __pycache__/
 font-src/kern-pairs.json
+# made by tools/build.py at deploy time
+img/logos.*.svg

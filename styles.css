@@ -58,9 +58,13 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
   color-scheme: dark;
+  background: var(--bg);
+  /* no rubber-band bounce past the top or bottom of the page */
+  overscroll-behavior: none;
 }
 
 body {
+  overscroll-behavior: none;
   background: var(--bg);
   color: var(--text);
   font-family: var(--display);

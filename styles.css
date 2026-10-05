@@ -531,6 +531,76 @@ select {
   color: var(--text);
 }
 
+/* ---------- engines & platforms ---------- */
+
+.engines-note {
+  color: var(--muted);
+  max-width: 60ch;
+  margin-bottom: 28px;
+}
+
+.engines-note a {
+  color: var(--text);
+}
+
+.stack {
+  display: grid;
+  gap: 24px;
+}
+
+.stack-group h3 {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+
+.chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 42px;
+  padding: 0 16px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: var(--surface);
+  font-family: var(--brand);
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.chip-icon {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+  color: var(--muted);
+  flex: none;
+}
+
+.chip-wordmark svg {
+  height: 17px;
+  width: auto;
+  fill: currentColor;
+}
+
+.chip-icon-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* ---------- people ---------- */
 
 .people {

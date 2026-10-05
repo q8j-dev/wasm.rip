@@ -583,33 +583,21 @@ select {
   font-size: 16px;
 }
 
-.chip-icon {
-  width: 18px;
-  height: 18px;
-  fill: currentColor;
-  color: var(--muted);
-  flex: none;
-}
-
-.chip-sub {
-  font-family: var(--mono);
-  font-weight: 400;
-  font-size: 12px;
-  color: var(--dim);
-}
-
 .chip-wordmark svg {
-  height: 17px;
   width: auto;
   fill: currentColor;
 }
 
-.chip-icon-line {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* white details inside a logo (eyes, inner shapes) are cut out of the mark */
+.chip-wordmark .cut {
+  fill: var(--surface);
+}
+
+.stack-note {
+  margin-top: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--dim);
 }
 
 /* ---------- people ---------- */

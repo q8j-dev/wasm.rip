@@ -2,7 +2,7 @@
 
 The logo rebuilt from scratch at 4096px. It's made of layers that are each
 described by numbers, so it renders cleanly at any size and every part can be
-changed.
+changed. No pixels of the original image are used.
 
 - `wasm-rip-logo.svg`: the editable logo. The starfield is an image layer and
   "WASM.RIP" is live text in the WASM.RIP font (embedded), one `<tspan>` per
@@ -14,28 +14,37 @@ changed.
 
 ## the model
 
-All positions and sizes are in pixels of the original 512px logo
+Positions and sizes are in pixels of the original 512px logo
 (`img/logo.png`), whatever size you render at.
 
 | file | what it holds |
 |---|---|
-| `stars.csv` | 5,724 stars: position, brightness, width |
+| `stars.csv` | 12,889 stars: position, brightness, measured width |
 | `streaks.json` | 9 diagonal streaks: a line and a brightness profile along it |
 | `flare.json` | the big star on the left: radial glow, 8 spikes |
-| `nebula.npz` | the clouds: about 148,000 elliptical gaussian brush strokes in three sizes |
+| `nebula.npz` | the clouds: 33,313 soft elliptical brush strokes in two sizes |
 | `text.json` | each letter's position, baseline and size, and the gradient |
+| `meta.json` | the original's own blur, star core/halo shapes, cloud sharpening |
 
-None of these store pixels from the original. They were fitted to it: stars
-and streaks were measured, and the brush strokes were optimised until the
-rendered clouds matched.
+The original is a small, JPEG-damaged image, so the model keeps its shapes and
+leaves its damage out:
+
+- Every point of light is a star in `stars.csv`, drawn crisp at its real width:
+  the measured width with the original's blur (0.33px) taken out. Bigger stars
+  get a crisp core inside a soft halo.
+- The clouds were fitted to a cleaned, star-free version of the original
+  (JPEG blocks and speckle removed), with strokes no smaller than 0.8px and
+  never negative, so they can't produce dark spots, blocks or pixel patterns.
+- The original only holds cloud detail down to its own pixel size. The clouds
+  are as sharp as that allows; anything finer would have to be invented.
 
 ## rendering
 
 ```
 pip install numpy pillow
-python3 render.py                 # 4096px
-python3 render.py --size 8192     # any size
-python3 render.py --sharp 1.0     # star width: 1.0 = as measured, default 0.85 (a little crisper)
+python3 render.py                    # 4096px
+python3 render.py --size 8192        # any size
+python3 render.py --parts stars      # only some layers: nebula, stars, streaks, flare
 ```
 
 It writes `background.png`, `wasm-rip-logo.svg` and `wasm-rip-logo.png` next
@@ -43,15 +52,16 @@ to itself.
 
 ## how close it is
 
-Rendered at 4096px and scaled back down to 512px, compared with the original
-over the whole image, letters included:
+The rebuild is crisp and the original is soft, so the starfield is first given
+the original's blur (the text isn't; in the original it sits on top of the
+photo). The result is then scaled to 512px and compared over the whole image:
 
-| scaled down with | SSIM | PSNR |
-|---|---|---|
-| area averaging | 0.982 | 32.2 dB |
-| Lanczos | 0.969 | 31.4 dB |
+| measure | score |
+|---|---|
+| multi-scale SSIM | 0.981 |
+| single-scale SSIM | 0.936 |
 
-With `--sharp 1.0` (stars exactly as measured) it's 0.988 and 0.980. The
-starfield alone, away from the letters, scores 0.993 at the default and 0.999
-with `--sharp 1.0`. What's left is mostly at the letter edges, where the
-font's shapes differ slightly from the original lettering.
+Single-scale SSIM compares pixel by pixel, so it also counts the original's
+JPEG noise and blocks, which the rebuild deliberately doesn't copy.
+Multi-scale SSIM judges structure across several scales and is the better
+measure of whether it looks like the same picture.
